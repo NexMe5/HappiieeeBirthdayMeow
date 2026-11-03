@@ -1,0 +1,14 @@
+.finale { position: relative; min-height: 100vh; min-height: 100svh; display: grid; place-items: center; align-content: center; gap: clamp(18px, 3vh, 30px); text-align: center;
+  padding-block: 14vh; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.finale-title { font-size: clamp(56px, 12vw, 190px); font-weight: 600; line-height: .9; letter-spacing: -.02em; font-variation-settings: "SOFT" 50, "opsz" 144; }
+.finale-title .ch { display: inline-block; opacity: 0; transform: translateY(.5em) rotate(6deg); transition: opacity 1s var(--ease), transform 1.2s var(--ease); }
+.finale.in .finale-title .ch { opacity: 1; transform: none; }
+.finale-name { font-family: var(--f-display); font-size: clamp(48px, 9vw, 140px); line-height: 1; margin: 0; opacity: 0; transform: scale(.92); transition: opacity 1.4s var(--ease) .9s, transform 1.6s var(--ease) .9s; }
+.finale.in .finale-name { opacity: 1; transform: none; }
+.nick-cycle { display: inline-block; transition: opacity .45s var(--ease), transform .45s var(--ease), filter .45s; }
+.nick-cycle.swap { opacity: 0; transform: translateY(-.25em); filter: blur(6px); }
+.finale-note, .finale .btn, .tap-hint { opacity: 0; transition: opacity 1.2s var(--ease) 1.6s; }
+.finale.in .finale-note, .finale.in .btn, .finale.in .tap-hint { opacity: 1; }
+.finale-note { color: var(--mist); margin: 0; font-size: 15px; }
+.finale-note b { color: var(--gold); font-weight: 600; }
+.tap-hint { font: 500 11px/1 var(--f-ui); letter-spacing: .3em; text-transform: uppercase; color: var(--mist); margin: 0; }

@@ -1,0 +1,92 @@
+/* Global tokens, base, atmosphere, shared type and the sticky "scene" primitive.
+   Layout concept: one long night. Each chapter is a pinned 100svh stage the reader scrubs by scrolling;
+   the sky behind shifts colour per chapter so the story feels like one continuous evening. */
+@property --g1 { syntax: '<color>'; inherits: true; initial-value: #5a1d4f; }
+@property --g2 { syntax: '<color>'; inherits: true; initial-value: #2a1240; }
+:root {
+  color-scheme: dark;
+  --night: #0c0614;
+  --plum: #1f0d29;
+  --wine: #5a1d4f;
+  --rose: #ec7c98;
+  --blush: #f7cdd6;
+  --gold: #f6c978;
+  --gold-deep: #c98b4a;
+  --cream: #f8f0e5;
+  --paper: #fbf6ee;
+  --ink: #3a2230;
+  --mist: rgba(248, 240, 229, .64);
+  --faint: rgba(248, 240, 229, .16);
+  --f-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-hand: "Caveat", "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  --f-ui: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --g1: #5a1d4f;
+  --g2: #2a1240;
+}
+* { box-sizing: border-box; }
+html { background: var(--night); }
+html.locked, html.locked body { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--cream);
+  font-family: var(--f-ui);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+body[data-ch="hero"]     { --g1: #5a1d4f; --g2: #23103a; }
+body[data-ch="words"]    { --g1: #3b1446; --g2: #160a26; }
+body[data-ch="tree"]     { --g1: #7a2a4e; --g2: #2a1030; }
+body[data-ch="cake"]     { --g1: #8a4a2a; --g2: #3a1430; }
+body[data-ch="reasons"]  { --g1: #8a2456; --g2: #2c1046; }
+body[data-ch="memories"] { --g1: #3d1f6a; --g2: #1b0c2c; }
+body[data-ch="letter"]   { --g1: #7a3a3a; --g2: #2a0f2a; }
+body[data-ch="us"]       { --g1: #8a3a5a; --g2: #2a1040; }
+body[data-ch="corner"]   { --g1: #7a2a5e; --g2: #3a1446; }
+body[data-ch="cinema"]   { --g1: #3a1240; --g2: #120818; }
+body[data-ch="finale"]   { --g1: #6a1f5a; --g2: #2a1050; }
+
+/* ---------- atmosphere ---------- */
+.atmos { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 110%, var(--g1) 0%, transparent 60%),
+              radial-gradient(90% 70% at 85% -10%, var(--g2) 0%, transparent 70%),
+              linear-gradient(180deg, var(--night) 0%, var(--plum) 100%);
+  transition: --g1 1.6s var(--ease), --g2 1.6s var(--ease);
+}
+#stars, #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#stars { z-index: 1; }
+#fx { z-index: 60; }
+.grain { position: fixed; inset: -50%; z-index: 59; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+main { position: relative; z-index: 2; }
+/* nothing behind the lock is visible, focusable or readable until she unlocks it */
+body:not(.is-open) main, body:not(.is-open) .rail, body:not(.is-open) .sound { visibility: hidden; }
+
+/* ---------- shared type ---------- */
+.eyebrow { font-family: var(--f-display); font-style: italic; font-weight: 400; font-size: clamp(15px, 1.4vw, 18px);
+  letter-spacing: .04em; color: var(--gold); margin: 0; font-variation-settings: "SOFT" 100, "opsz" 24; }
+h1, h2 { font-family: var(--f-display); font-weight: 350; margin: 0; text-wrap: balance; line-height: 1.02;
+  font-variation-settings: "SOFT" 100, "opsz" 144; letter-spacing: -.01em; }
+em { font-style: italic; }
+.name-ink { font-style: italic; font-weight: 420; background: linear-gradient(100deg, var(--gold) 10%, var(--blush) 55%, var(--rose) 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .08em; }
+.btn { appearance: none; border: 1px solid rgba(246, 201, 120, .55); color: var(--cream); cursor: pointer;
+  font: 600 14px/1 var(--f-ui); letter-spacing: .04em; padding: 15px 26px; border-radius: 999px;
+  background: radial-gradient(120% 140% at 50% 0%, rgba(246, 201, 120, .28), rgba(236, 124, 152, .12) 60%, rgba(0,0,0,0));
+  box-shadow: 0 0 0 0 rgba(246, 201, 120, .0), 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s; }
+.btn:hover { transform: translateY(-2px); border-color: var(--gold); box-shadow: 0 0 34px 2px rgba(246, 201, 120, .28), 0 14px 34px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.16); }
+.btn:focus-visible, .hold:focus-visible, .sound:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+/* ---------- scene primitive (sticky stage) ---------- */
+.scene { position: relative; height: var(--len, 300vh); }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hold .heart-g, .bulb, .flame-inner, .scroll-cue i { animation: none; }
+}

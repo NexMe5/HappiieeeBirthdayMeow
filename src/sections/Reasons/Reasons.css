@@ -1,0 +1,12 @@
+.reasons .stage { place-items: stretch; }
+.reasons-head { position: absolute; top: calc(8svh + env(safe-area-inset-top, 0px)); left: 0; right: 0; display: grid; justify-items: center; gap: 8px; text-align: center; z-index: 3; padding-inline: 16px; }
+.reasons-head h2 { font-size: clamp(30px, 4vw, 54px); }
+.counter { font: 600 12px/1 var(--f-ui); letter-spacing: .3em; color: var(--mist); font-variant-numeric: tabular-nums; margin: 0; }
+.counter b { color: var(--gold); font-weight: 600; }
+.balloon { position: absolute; left: 50%; top: 50%; width: clamp(104px, 13vw, 150px); will-change: transform, opacity; z-index: 2; }
+.reason { position: absolute; left: 50%; top: 54%; width: min(20ch, 88vw); transform: translate(-50%, -50%); text-align: center; margin: 0; z-index: 2;
+  font-family: var(--f-display); font-style: italic; font-weight: 330; font-size: clamp(30px, 4.8vw, 70px); line-height: 1.1;
+  text-wrap: balance; opacity: 0; will-change: transform, opacity, filter; font-variation-settings: "SOFT" 100, "opsz" 120; }
+.reason-num { position: absolute; left: 50%; top: 54%; transform: translate(-50%, -50%); z-index: 1; margin: 0; pointer-events: none;
+  font-family: var(--f-display); font-style: italic; font-weight: 700; font-size: clamp(200px, 34vw, 460px); line-height: 1; color: transparent;
+  -webkit-text-stroke: 1px rgba(246, 201, 120, .14); font-variant-numeric: lining-nums; opacity: 0; }

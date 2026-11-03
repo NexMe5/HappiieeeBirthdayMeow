@@ -1,0 +1,4 @@
+.reveal-text { font-family: var(--f-display); font-weight: 300; font-size: clamp(28px, 4.6vw, 66px); line-height: 1.16; max-width: 20ch;
+  margin: 0; text-align: center; text-wrap: balance; font-variation-settings: "SOFT" 100, "opsz" 96; }
+.reveal-text .w { display: inline-block; opacity: .13; will-change: opacity, filter; }
+.reveal-text .em { font-style: italic; color: var(--gold); }

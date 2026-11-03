@@ -1,0 +1,20 @@
+.hero { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-content: center; justify-items: center; text-align: center;
+  padding-block: 12vh 16vh; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); overflow: hidden; }
+.hero-in { display: grid; gap: clamp(20px, 3vh, 34px); justify-items: center; will-change: transform, opacity; position: relative; z-index: 2; }
+.hero h1 { font-size: clamp(46px, 9.4vw, 148px); font-weight: 300; }
+.hero h1 .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.hero h1 .line > span { display: inline-block; transform: translateY(110%); transition: transform 1.6s var(--ease); }
+.hero h1 .line:nth-child(2) > span { transition-delay: .14s; }
+.is-open .hero h1 .line > span { transform: none; }
+.hero .eyebrow, .hero-sub, .scroll-cue { opacity: 0; transform: translateY(14px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
+.is-open .hero .eyebrow { opacity: 1; transform: none; transition-delay: .5s; }
+.is-open .hero-sub { opacity: 1; transform: none; transition-delay: .9s; }
+.is-open .scroll-cue { opacity: 1; transform: none; transition-delay: 1.6s; }
+.hero-sub { max-width: 34ch; color: var(--mist); font-size: clamp(16px, 1.5vw, 19px); margin: 0; }
+.hero-sub .name-ink { font-family: var(--f-display); font-size: 1.2em; }
+.moon { position: absolute; z-index: 1; width: clamp(120px, 15vw, 230px); right: 5vw; top: 5vh; opacity: 0; transition: opacity 2.4s .3s; will-change: transform; }
+.is-open .moon { opacity: 1; }
+.scroll-cue { position: absolute; bottom: calc(5vh + env(safe-area-inset-bottom, 0px)); left: 50%; translate: -50% 0; display: grid; justify-items: center; gap: 12px;
+  font: 500 11px/1 var(--f-ui); letter-spacing: .32em; text-transform: uppercase; color: var(--mist); z-index: 2; }
+.scroll-cue i { width: 1px; height: 46px; background: linear-gradient(var(--gold), transparent); transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
+@keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }

@@ -1,0 +1,16 @@
+.cake .stage { align-content: center; gap: clamp(14px, 2.4vh, 26px); text-align: center; grid-template-rows: auto auto auto auto; }
+.cake-title { font-size: clamp(44px, 7vw, 100px); font-style: italic; font-weight: 320; }
+.cake-svg { width: min(360px, 74vw); height: auto; overflow: visible; }
+.flame { transform-box: fill-box; transform-origin: 50% 100%; }
+.flame-inner { transform-box: fill-box; transform-origin: 50% 100%; animation: flicker .9s ease-in-out infinite alternate; }
+@keyframes flicker { 0% { transform: scale(1, 1) skewX(0); } 40% { transform: scale(.94, 1.06) skewX(2deg); } 100% { transform: scale(1.03, .95) skewX(-2deg); } }
+.smoke path { fill: none; stroke: rgba(248, 240, 229, .5); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 60; stroke-dashoffset: 60; opacity: 0; }
+.blown .smoke path { animation: smoke 2.6s var(--ease) forwards; }
+.blown .smoke path:nth-child(2) { animation-delay: .15s; } .blown .smoke path:nth-child(3) { animation-delay: .3s; }
+@keyframes smoke { 0% { opacity: .9; stroke-dashoffset: 60; transform: translateY(0); } 100% { opacity: 0; stroke-dashoffset: 0; transform: translateY(-34px); } }
+.cake-actions { display: grid; justify-items: center; gap: 10px; min-height: 80px; }
+.after-wish { font-family: var(--f-display); font-style: italic; color: var(--mist); margin: 0; font-size: clamp(16px, 1.6vw, 20px);
+  opacity: 0; transform: translateY(10px); transition: opacity 1.2s var(--ease) .6s, transform 1.2s var(--ease) .6s; }
+.blown .after-wish { opacity: 1; transform: none; }
+.blown #blow { opacity: 0 !important; pointer-events: none !important; transform: scale(.9); }
+#blow { transition: opacity .5s, transform .5s var(--ease); }
