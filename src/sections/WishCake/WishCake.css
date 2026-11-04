@@ -1,4 +1,5 @@
 .cake .stage { align-content: center; gap: clamp(14px, 2.4vh, 26px); text-align: center; grid-template-rows: auto auto auto auto; }
+.cake .stage > :not(.wish-backdrop) { position: relative; z-index: 1; }
 .cake-title { font-size: clamp(44px, 7vw, 100px); font-style: italic; font-weight: 320; }
 .cake-svg { width: min(360px, 74vw); height: auto; overflow: visible; }
 .flame { transform-box: fill-box; transform-origin: 50% 100%; }
@@ -8,9 +9,49 @@
 .blown .smoke path { animation: smoke 2.6s var(--ease) forwards; }
 .blown .smoke path:nth-child(2) { animation-delay: .15s; } .blown .smoke path:nth-child(3) { animation-delay: .3s; }
 @keyframes smoke { 0% { opacity: .9; stroke-dashoffset: 60; transform: translateY(0); } 100% { opacity: 0; stroke-dashoffset: 0; transform: translateY(-34px); } }
-.cake-actions { display: grid; justify-items: center; gap: 10px; min-height: 80px; }
-.after-wish { font-family: var(--f-display); font-style: italic; color: var(--mist); margin: 0; font-size: clamp(16px, 1.6vw, 20px);
-  opacity: 0; transform: translateY(10px); transition: opacity 1.2s var(--ease) .6s, transform 1.2s var(--ease) .6s; }
+
+/* the cake and your photo share one spot: the photo takes over right after "I wish you were here" */
+.cake-cell { display: grid; place-items: center; }
+.cake-cell > * { grid-area: 1 / 1; }
+.cake-wrap { transition: opacity 1s var(--ease), transform 1.2s var(--ease), filter 1s var(--ease); }
+.revealed .cake-wrap { opacity: 0; transform: translateY(40px) scale(.8); filter: blur(8px); pointer-events: none; }
+.wish-front { margin: 0; height: min(40svh, 380px); opacity: 0; transform: scale(.6) rotate(-8deg); pointer-events: none;
+  transition: opacity 1.2s var(--ease) .25s, transform 1.8s var(--ease) .25s; }
+.revealed .wish-front { opacity: 1; transform: rotate(-2deg); }
+.wish-front img { display: block; height: 100%; width: auto; max-width: 86vw; object-fit: contain; border-radius: 6px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 90px rgba(236, 124, 152, .35); }
+
+/* line on top (subtitles / your line), one button slot below */
+.cake-actions { display: grid; grid-template-areas: "line" "btn"; justify-items: center; gap: 14px; min-height: 104px; }
+.after-wish { grid-area: line; margin: 0; min-height: 1.4em; max-width: 30ch; font-family: var(--f-display); font-style: italic; color: var(--mist);
+  font-size: clamp(16px, 1.6vw, 20px); text-wrap: balance; opacity: 0; transform: translateY(10px); transition: opacity 1.2s var(--ease) .6s, transform 1.2s var(--ease) .6s; }
 .blown .after-wish { opacity: 1; transform: none; }
+.listening .after-wish { transition-delay: 0s; }
+.after-wish[data-kind="sub"] { color: var(--cream); font-size: clamp(19px, 2.1vw, 26px); text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+.revealed .after-wish[data-kind="line"] { color: var(--cream); font-size: clamp(18px, 2vw, 24px); }
+#blow { grid-area: btn; transition: opacity .5s, transform .5s var(--ease); }
 .blown #blow { opacity: 0 !important; pointer-events: none !important; transform: scale(.9); }
-#blow { transition: opacity .5s, transform .5s var(--ease); }
+
+/* "Listen to Nandini's wish" / "Listen again" */
+.wish-btn { grid-area: btn; display: inline-flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transform: translateY(12px);
+  transition: opacity 1s var(--ease) 1.6s, transform 1s var(--ease) 1.6s, box-shadow .4s, border-color .4s; }
+.wish-btn svg { width: 16px; height: 16px; fill: var(--gold); }
+.blown .wish-btn { opacity: 1; pointer-events: auto; transform: none; animation: wish-glow 2.2s var(--ease) 2.6s infinite; }
+.listening .wish-btn { transition-delay: 0s; }
+.wish-btn.playing { animation: none; cursor: default; border-color: var(--gold); }
+@keyframes wish-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(246, 201, 120, 0), 0 10px 30px rgba(0,0,0,.35); } 50% { box-shadow: 0 0 34px 4px rgba(246, 201, 120, .38), 0 10px 30px rgba(0,0,0,.35); } }
+.wish-eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 14px; }
+.wish-eq i { width: 3px; height: 4px; border-radius: 2px; background: var(--gold); animation: eq 1s ease-in-out infinite; }
+.wish-eq i:nth-child(2) { animation-delay: -.25s; } .wish-eq i:nth-child(3) { animation-delay: -.5s; } .wish-eq i:nth-child(4) { animation-delay: -.75s; }
+
+/* soft blurred version of the photo filling the background once it's revealed */
+.wish-backdrop { position: absolute; inset: 0; z-index: 0; overflow: hidden; opacity: 0; transition: opacity 2.4s var(--ease); pointer-events: none; }
+.revealed .wish-backdrop { opacity: 1; }
+.wish-backdrop img { position: absolute; inset: -8%; width: 116%; height: 116%; object-fit: cover; filter: blur(30px) brightness(.4) saturate(1.25); }
+.wish-backdrop::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(12, 6, 20, .6) 0%, rgba(12, 6, 20, .15) 35%, rgba(12, 6, 20, .2) 65%, rgba(12, 6, 20, .75) 100%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .blown .wish-btn { animation: none; }
+  .wish-front { transition: opacity .6s; transform: none; }
+}

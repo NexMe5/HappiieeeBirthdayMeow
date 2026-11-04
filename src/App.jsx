@@ -106,7 +106,11 @@ export default function App() {
     switching.current = false;
   }, []);
 
-  const openCorner = useCallback(() => goTo("corner"), [goTo]);
+  // opening the corner starts the song from her wish (inside the tap, so phones allow the sound)
+  const openCorner = useCallback(() => {
+    music.playWish({ from: config.corner.songFrom ?? 0 });
+    goTo("corner");
+  }, [goTo]);
   const backToStory = useCallback(() => {
     if (history.state?.view === "corner") history.back(); // popstate below does the switch
     else goTo("story", { push: false });

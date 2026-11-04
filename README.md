@@ -24,7 +24,7 @@ letter, captions and photos.
 | Where it shows | Folder | Config |
 |---|---|---|
 | "The many moods of Nandini" (her funny photos, after the reasons) | `public/photos/Cute/` | `memories` |
-| "Us, so far" collage (after the letter, ends with the "Explore…" button) | `public/photos/Our/` | `us` |
+| "Us, so far" (one favourite photo after the letter, then the "Explore…" button) | `public/photos/Our/` | `usPhoto` |
 | "The cutest corner of Mau & Boka" (its own scroll story: photos + videos) | `public/photos/Our/` | `corner.photos`, `corner.videos` |
 
 1. Put files in the right folder (photos: jpg / png / webp under ~500 KB; videos: mp4, ideally under ~8 MB).
@@ -35,8 +35,21 @@ letter, captions and photos.
 Add or remove entries freely; each section gets longer or shorter by itself.
 Original, uncompressed photos are kept in `photos-original/` (outside `public/`, so they aren't deployed).
 
+### Her wish (cake chapter)
+After she blows out the candles, "Listen to Nandini's wish" plays `public/audio/nandini-wish.m4a` once.
+The Happy Birthday music box stops for good. Her words show as subtitles (`wish.subtitles`); at `wish.revealAt`
+seconds (right after "I wish you were here") the cake disappears, your photo comes to the front and fireworks +
+heart crackers go off by themselves until the audio ends. Then the button becomes "Listen again".
+
+### The letter, read aloud
+When the letter opens, `public/audio/love-letter.m4a` plays and every line in `letter.lines` writes itself
+word by word between its `at` and `end` seconds. Whatever else was playing pauses and resumes afterwards.
+If a phone blocks the sound, the words still appear on the same timing and a "tap to hear it" button appears.
+Sound is unlocked on her first press of the heart, which is what lets iPhones play it later without another tap.
+
 ### The corner page
-The "Explore the cutest corner of Mau & Boka" button switches to a second scroll story inside the same app
+The "Explore the cutest corner of Mau & Boka" button starts the song from her wish (from `corner.songFrom` seconds,
+right after the talking) and switches to a second scroll story inside the same app
 (URL shows `#corner`; the phone's back button returns to the collage; refreshing starts again at the lock):
 
 1. **The walk**: the title sits in front of you; scrolling flies you through it and past every photo in `corner.photos`.

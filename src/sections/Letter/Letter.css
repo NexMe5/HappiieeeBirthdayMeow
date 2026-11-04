@@ -23,9 +23,21 @@
 .paper .dear { font-size: 1.45em; color: #8a3b55; margin: 0 0 .3em; }
 .paper .letter-body p { margin: 0 0 var(--lh); }
 .paper .letter-body p:last-child { margin: 0; }
-.paper .wd { display: inline-block; white-space: nowrap; }
-.paper .c { opacity: 0; transition: opacity .25s; }
-.paper .c.on { opacity: 1; }
+/* each word fades in, as if written, the moment it's said */
+.paper .wd { display: inline-block; white-space: nowrap; opacity: 0; filter: blur(3px); transform: translateY(3px);
+  transition: opacity .45s var(--ease), filter .45s var(--ease), transform .45s var(--ease); }
+.paper .wd.on { opacity: 1; filter: none; transform: none; }
+.voice-pill { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 999px;
+  background: rgba(138, 59, 85, .1); border: 1px solid rgba(138, 59, 85, .25); color: #8a3b55; font: 600 10px/1 var(--f-ui); letter-spacing: .12em; text-transform: uppercase; }
+.voice-pill .wish-eq i { background: #8a3b55; }
+.voice-btn { cursor: pointer; transition: background .3s, border-color .3s; }
+.voice-btn:hover { background: rgba(138, 59, 85, .18); border-color: rgba(138, 59, 85, .5); }
+.voice-btn:focus-visible { outline: 2px solid #8a3b55; outline-offset: 2px; }
+.voice-btn svg { width: 12px; height: 12px; fill: currentColor; }
+.letter-head .sound-hint { display: inline-flex; align-items: center; gap: 8px; font: 600 11px/1 var(--f-ui); font-style: normal; letter-spacing: .24em;
+  text-transform: uppercase; color: var(--gold); }
+.sound-hint svg { width: 16px; height: 16px; fill: var(--gold); }
+@media (prefers-reduced-motion: reduce) { .paper .wd { transition: opacity .3s; filter: none; transform: none; } }
 .paper .sign { text-align: right; margin: var(--lh) 0 0; color: #8a3b55; opacity: 0; transition: opacity 1.2s var(--ease); }
 .paper .sign.on { opacity: 1; }
 .paper .sign span { display: block; }

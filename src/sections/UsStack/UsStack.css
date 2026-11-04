@@ -1,16 +1,14 @@
-.us .stage { place-items: stretch; }
-.us-head { position: absolute; top: calc(6svh + env(safe-area-inset-top, 0px)); left: 0; right: 0; display: grid; justify-items: center; gap: 8px;
-  text-align: center; z-index: 30; padding-inline: 16px; }
+/* heading, photo and button stacked in one column, so nothing can overlap on short screens */
+.us .stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 2.6svh, 28px); text-align: center;
+  padding-block: calc(4svh + env(safe-area-inset-top, 0px)) calc(max(3svh, 70px) + env(safe-area-inset-bottom, 0px)); }
+.us-head { display: grid; justify-items: center; gap: 6px; will-change: transform, opacity; }
 .us-head h2 { font-size: clamp(32px, 4.6vw, 64px); }
-.us-pile { position: absolute; left: 50%; top: 47%; width: 0; height: 0; }
-.us-card { --w: min(290px, 66vw, 36svh); position: absolute; left: 0; top: 0; width: var(--w); margin: 0; opacity: 0;
+.us-card { flex: none; width: max(160px, min(290px, 64vw, calc((100svh - 400px) * .78))); margin: 0; opacity: 0;
   background: var(--paper); padding: 12px 12px 0; border-radius: 3px; color: var(--ink); will-change: transform, opacity;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 26px 60px rgba(0, 0, 0, .55), 0 0 70px rgba(236, 124, 152, .08); }
-.us-card figcaption { font-family: var(--f-hand); font-size: clamp(20px, 2vw, 24px); text-align: center; padding: 10px 6px 14px; line-height: 1.1; color: #4a2b3a; }
-/* sits above the music button (bottom-left, ~62px tall) on phones */
-.us-end { position: absolute; left: 50%; bottom: calc(max(4svh, 76px) + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); width: min(560px, 92vw);
-  display: grid; justify-items: center; gap: 14px; text-align: center; z-index: 40; opacity: 0; pointer-events: none; }
-.us-end p { margin: 0; max-width: 30ch; font-family: var(--f-display); font-style: italic; font-weight: 320; font-size: clamp(19px, 2.2vw, 28px); line-height: 1.2; text-wrap: balance; }
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .05), 0 26px 60px rgba(0, 0, 0, .55), 0 0 70px rgba(236, 124, 152, .1); }
+.us-card figcaption { font-family: var(--f-hand); font-size: clamp(19px, 2vw, 24px); text-align: center; padding: 10px 6px 14px; line-height: 1.1; color: #4a2b3a; }
+.us-end { display: grid; justify-items: center; gap: 14px; width: min(560px, 92vw); opacity: 0; pointer-events: none; }
+.us-end p { margin: 0; max-width: 30ch; font-family: var(--f-display); font-style: italic; font-weight: 320; font-size: clamp(18px, 2.1vw, 26px); line-height: 1.2; text-wrap: balance; }
 .corner-cta { font-size: 13.5px; padding: 14px 22px; line-height: 1.3; animation: cta-glow 2.4s var(--ease) infinite; }
 .corner-cta span { display: inline-block; transition: transform .3s var(--ease); }
 .corner-cta:hover span { transform: translateX(4px); }

@@ -3,6 +3,7 @@ import { config } from "../../config";
 import { HEART } from "../../lib/heart";
 import { clamp } from "../../lib/math";
 import { useTicker } from "../../hooks/useEngine";
+import { music } from "../../engine/music";
 
 const HOLD_MS = 1400;
 
@@ -21,6 +22,7 @@ export default function HoldHeart({ shown, enabled, onComplete }) {
   const begin = (e) => {
     e?.preventDefault();
     if (!enabled || done.current) return;
+    music.unlock(); // inside her tap, so every sound later can start on its own (iPhone needs this)
     holding.current = true;
     start.current = performance.now() - progress.current * HOLD_MS;
     setIsHolding(true);

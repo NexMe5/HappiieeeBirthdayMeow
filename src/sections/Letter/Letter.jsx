@@ -1,28 +1,50 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import "./Letter.css";
 import { config, nick } from "../../config";
 import { useScene, useTicker } from "../../hooks/useEngine";
 import { viewport } from "../../engine/scrollEngine";
+import { music } from "../../engine/music";
 import { easeIn, easeInOut, easeOut, lerp, seg } from "../../lib/math";
-import { reducedMotion } from "../../lib/heart";
-
-const CHARS_PER_SEC = reducedMotion ? 400 : 48;
 
 /**
  * Scroll-driven envelope: the seal pops, the flap opens, the letter slides out and grows to fill the
- * screen, then writes itself. Tapping the letter finishes the writing instantly.
+ * screen. Then it is read aloud: the voice plays and each line writes itself word by word as it's said.
+ * If the phone blocks the sound, the words still appear on the same timing and a button offers the voice.
  */
 export default function Letter() {
-  // split paragraphs into words of characters so the text can appear letter by letter without reflow
-  const paragraphs = useMemo(
-    () => config.letter.map((par) => par.split(" ").map((w) => [...w])),
-    []
-  );
-  const charRefs = useRef([]);
-  const typing = useRef({ started: false, t0: 0, count: 0, done: false });
+  const L = config.letter;
+  // paragraphs -> lines -> words, each word with the second it should appear
+  const { paragraphs, wordTimes, lastEnd } = useMemo(() => {
+    const paragraphs = [[]], wordTimes = [];
+    L.lines.forEach((line) => {
+      const words = line.text.split(" ");
+      const span = (line.end - line.at) * 0.92;
+      const items = words.map((w, k) => {
+        wordTimes.push(line.at + (k / words.length) * span);
+        return { w, i: wordTimes.length - 1 };
+      });
+      paragraphs[paragraphs.length - 1].push(items);
+      if (line.br) paragraphs.push([]);
+    });
+    return { paragraphs: paragraphs.filter((p) => p.length), wordTimes, lastEnd: Math.max(...L.lines.map((l) => l.end)) };
+  }, []);
+  const wordRefs = useRef([]);
+  // mode: idle -> pending (asking the phone to play) -> audio | clock (sound blocked) ; done when finished
+  const voice = useRef({ mode: "idle", t0: 0, count: 0, done: false });
+  const [ui, setUi] = useState("idle"); // idle | playing | blocked | done
   const r = {
     head: useRef(null), back: useRef(null), front: useRef(null), flap: useRef(null),
     seal: useRef(null), paper: useRef(null), sign: useRef(null),
+  };
+
+  const reveal = (reset) => {
+    if (reset) { wordRefs.current.forEach((el) => el?.classList.remove("on")); r.sign.current.classList.remove("on"); }
+    voice.current = { mode: "pending", t0: performance.now(), count: reset ? 0 : voice.current.count, done: false };
+    music.playVoice().then((ok) => {
+      voice.current.mode = ok ? "audio" : "clock";
+      voice.current.t0 = performance.now();
+      setUi(ok ? "playing" : "blocked");
+    });
   };
 
   const { sceneRef, stageRef } = useScene((p) => {
@@ -63,43 +85,68 @@ export default function Letter() {
     paper.style.zIndex = grow > 0.05 ? 7 : 2;
     r.head.current.style.opacity = 1 - easeOut(seg(p, 0.56, 0.68));
 
-    if (p > 0.8 && !typing.current.started) typing.current = { started: true, t0: performance.now(), count: 0, done: false };
+    if (p > 0.8 && voice.current.mode === "idle") reveal(false);
   });
 
+  // write each word the moment it's said
   useTicker((now) => {
-    const t = typing.current, chars = charRefs.current;
-    if (!t.started || t.done) return;
-    const target = Math.min(chars.length, Math.floor(((now - t.t0) / 1000) * CHARS_PER_SEC));
-    while (t.count < target) chars[t.count++]?.classList.add("on");
-    if (t.count >= chars.length) { t.done = true; r.sign.current.classList.add("on"); }
+    const v = voice.current, words = wordRefs.current;
+    if (v.mode === "idle" || v.mode === "pending" || v.done) return;
+    let t;
+    if (v.mode === "audio") t = music.voicePlaying() ? music.voiceTime() : Infinity; // finished or paused: show the rest
+    else t = (now - v.t0) / 1000;
+    while (v.count < words.length && wordTimes[v.count] <= t) words[v.count++]?.classList.add("on");
+    if (v.count >= words.length && t >= lastEnd) {
+      v.done = true;
+      r.sign.current.classList.add("on");
+      setUi("done");
+    }
   });
 
-  const finishNow = () => { if (typing.current.started) typing.current.t0 = -1e9; };
+  const onVoiceBtn = (e) => {
+    e.stopPropagation();
+    if (ui === "blocked") reveal(true);      // sound was blocked: start over with the voice
+    else if (ui === "done") { music.playVoice(); setUi("again"); }
+  };
+  const btnLabel = { blocked: "tap to hear it", done: "hear it again" }[ui];
 
-  let ci = 0;
   return (
     <section className="scene letter" data-ch="letter" ref={sceneRef} style={{ "--len": "340vh" }}>
       <div className="stage" ref={stageRef}>
         <div className="letter-head" ref={r.head}>
           <h2>One last thing, <span className="name-ink">{nick(2)}</span>&hellip;</h2>
           <p>{config.from} wrote you a letter.</p>
+          {L.hint && (
+            <p className="sound-hint">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" /></svg>
+              {L.hint}
+            </p>
+          )}
         </div>
         <div className="env env-back" ref={r.back} />
         <div className="env env-flap" ref={r.flap} />
-        <article className="paper" ref={r.paper} aria-label="Letter" onClick={finishNow}>
+        <article className="paper" ref={r.paper} aria-label="Letter">
+          {(ui === "playing" || ui === "again") && (
+            <span className="voice-pill" aria-hidden="true"><span className="wish-eq"><i /><i /><i /><i /></span></span>
+          )}
+          {btnLabel && (
+            <button type="button" className="voice-pill voice-btn" onClick={onVoiceBtn}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg> {btnLabel}
+            </button>
+          )}
           <p className="dear">Dear {nick(3)},</p>
           <div className="letter-body">
-            {paragraphs.map((words, pi) => (
+            {paragraphs.map((lines, pi) => (
               <p key={pi}>
-                {words.map((chars, wi) => (
-                  <span key={wi}>
-                    <span className="wd">
-                      {chars.map((ch, k) => {
-                        const idx = ci++;
-                        return <span key={k} className="c" ref={(el) => (charRefs.current[idx] = el)}>{ch}</span>;
-                      })}
-                    </span>
-                    {wi < words.length - 1 ? " " : ""}
+                {lines.map((items, li) => (
+                  <span key={li}>
+                    {items.map(({ w, i }, k) => (
+                      <span key={k}>
+                        <span className="wd" ref={(el) => (wordRefs.current[i] = el)}>{w}</span>
+                        {k < items.length - 1 ? " " : ""}
+                      </span>
+                    ))}
+                    {li < lines.length - 1 ? " " : ""}
                   </span>
                 ))}
               </p>
