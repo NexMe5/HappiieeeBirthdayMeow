@@ -5,10 +5,11 @@ import { viewport } from "../../engine/scrollEngine";
 import { clamp, easeIn, easeOut, lerp, seg } from "../../lib/math";
 
 /**
- * The videos, one at a time: each grows from a tilted little card into a big cinema frame,
- * plays muted while it's on screen, then lifts away for the next. "Play with sound" opens it full screen.
+ * The videos, one at a time: each grows from a tilted little card into a big cinema frame and plays
+ * from the start, muted, while the song from her wish keeps playing behind. Each one gets enough scroll
+ * to be watched in full before it lifts away for the next.
  */
-export default function Cinema({ videos, onOpen }) {
+export default function Cinema({ videos }) {
   const c = config.corner;
   const n = videos.length;
   const frameRefs = useRef([]);
@@ -21,7 +22,7 @@ export default function Cinema({ videos, onOpen }) {
     const v = videoRefs.current[i];
     if (!v || playing.current[i] === on) return;
     playing.current[i] = on;
-    if (on) v.play().catch(() => { playing.current[i] = false; });
+    if (on) { v.currentTime = 0; v.play().catch(() => { playing.current[i] = false; }); } // always from the start
     else v.pause();
   };
 
@@ -34,8 +35,8 @@ export default function Cinema({ videos, onOpen }) {
     videos.forEach((v, i) => {
       const el = frameRefs.current[i];
       const t = q - i;
-      const inK = easeOut(seg(t, -0.08, 0.36));
-      const outK = i === n - 1 ? 0 : easeIn(seg(t, 0.82, 1));
+      const inK = easeOut(seg(t, -0.08, 0.26));
+      const outK = i === n - 1 ? 0 : easeIn(seg(t, 0.88, 1));
       const maxW = W * (mobile ? 0.88 : 0.74), maxH = H * (mobile ? 0.62 : 0.64);
       let w = maxW, h = w / v.ratio;
       if (h > maxH) { h = maxH; w = h * v.ratio; }
@@ -65,7 +66,7 @@ export default function Cinema({ videos, onOpen }) {
   }, []);
 
   return (
-    <section className="scene cinema" data-ch="cinema" ref={sceneRef} style={{ "--len": `${n * 120 + 60}vh` }}>
+    <section className="scene cinema" data-ch="cinema" ref={sceneRef} style={{ "--len": `${n * 190 + 60}vh` }}>
       <div className="stage" ref={stageRef}>
         <div className="cinema-head" ref={headRef}>
           <p className="eyebrow">{c.videosEyebrow}</p>
@@ -76,9 +77,6 @@ export default function Cinema({ videos, onOpen }) {
             <video ref={(el) => (videoRefs.current[i] = el)} src={v.src} poster={v.poster} muted loop playsInline preload="metadata" />
             <figcaption>
               <span className="cine-caption">{v.caption}</span>
-              <button type="button" className="cine-sound" onClick={(e) => { e.stopPropagation(); setPlaying(i, false); onOpen(i); }}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg> play with sound
-              </button>
             </figcaption>
           </figure>
         ))}

@@ -31,7 +31,7 @@ export default function Corner({ onBack }) {
       </nav>
 
       <Tunnel photos={photos} onOpen={(index) => setOpen({ list: photos, index })} />
-      {videos.length > 0 && <Cinema videos={videos} onOpen={(index) => setOpen({ list: videos, index })} />}
+      {videos.length > 0 && <Cinema videos={videos} />}
       <HeartMosaic photos={photos} onOpen={(index) => setOpen({ list: photos, index })} onBack={onBack} />
 
       {open && <Lightbox items={open.list} index={open.index} onClose={() => setOpen(null)} onMove={move} />}

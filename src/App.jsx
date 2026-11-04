@@ -108,17 +108,23 @@ export default function App() {
 
   // opening the corner starts the song from her wish (inside the tap, so phones allow the sound)
   const openCorner = useCallback(() => {
-    music.playWish({ from: config.corner.songFrom ?? 0 });
+    const from = config.corner.songFrom ?? 0;
+    music.playWish({ from, loopFrom: from }); // loops from the song's start while she's on this page
     goTo("corner");
   }, [goTo]);
   const backToStory = useCallback(() => {
+    music.endWishLoop();
     if (history.state?.view === "corner") history.back(); // popstate below does the switch
     else goTo("story", { push: false });
   }, [goTo]);
 
   // browser / phone back button
   useEffect(() => {
-    const onPop = () => goTo(history.state?.view === "corner" ? "corner" : "story", { push: false });
+    const onPop = () => {
+      const next = history.state?.view === "corner" ? "corner" : "story";
+      if (next === "story") music.endWishLoop();
+      goTo(next, { push: false });
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, [goTo]);

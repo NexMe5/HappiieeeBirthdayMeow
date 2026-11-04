@@ -119,18 +119,22 @@ export const music = {
    * Her wish: plays once (replay with the same call). The music box never comes back after this.
    * from: start at this second, e.g. straight into the song when "the cutest corner" opens.
    */
-  playWish({ from = 0 } = {}) {
+  playWish({ from = 0, loopFrom = null } = {}) {
     const a = audioEl("wish", config.wish.audio);
     stopBox();
     mode = "wish";
     a.loop = false;
     a.muted = false;
-    a.onended = () => { on = false; notify(); };
+    a.onended = loopFrom == null
+      ? () => { on = false; notify(); }
+      : () => { a.currentTime = loopFrom; a.play().catch(() => { on = false; notify(); }); };
     a.currentTime = from;
     on = true;
     a.play().catch(() => { on = false; notify(); });
     notify();
   },
+  /** Stop looping the song (it finishes its current play and stops). */
+  endWishLoop() { if (els.wish) els.wish.onended = () => { on = false; notify(); }; },
   wishTime: () => (mode === "wish" && els.wish ? els.wish.currentTime : -1),
   wishEnded: () => !!els.wish?.ended,
 

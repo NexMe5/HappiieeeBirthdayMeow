@@ -116,7 +116,7 @@ export const config = {
     ],
     videosEyebrow: "moving pictures",
     videosTitle: "Press play on us",
-    // ratio: width / height of the video
+    // ratio: width / height of the video. They play muted with the song behind them.
     videos: [
       { src: "photos/Our/us-walk.mp4", poster: "photos/Our/us-walk-poster.webp", ratio: 720 / 1280, caption: "our main character walk" },
       { src: "photos/Our/eyes-for-u.mp4", poster: "photos/Our/eyes-for-u-poster.webp", ratio: 848 / 478, caption: "my eyes always look for you" },    ],

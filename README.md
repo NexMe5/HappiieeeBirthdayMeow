@@ -53,8 +53,9 @@ right after the talking) and switches to a second scroll story inside the same a
 (URL shows `#corner`; the phone's back button returns to the collage; refreshing starts again at the lock):
 
 1. **The walk**: the title sits in front of you; scrolling flies you through it and past every photo in `corner.photos`.
-2. **Cinema**: each video in `corner.videos` grows from a tilted card into a big frame and plays muted;
-   "play with sound" opens it full screen and pauses the music box. Set `ratio` to the video's width / height.
+2. **Cinema**: each video in `corner.videos` grows from a tilted card into a big frame and plays from the start,
+   muted, while the song keeps playing behind (it loops from `corner.songFrom` while she's on this page).
+   Each video gets enough scroll to be watched in full. Set `ratio` to the video's width / height.
 3. **The heart**: every photo flies in from the sky and forms one big heart around "Mau & Boka".
 
 Tap any photo to open it full screen (swipe or arrow keys to move).
